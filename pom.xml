@@ -6,12 +6,6 @@
   <version>1.9.2</version>
   <name>ProjectKorra</name>
   <repositories>
-    <!-- local jar files, add more using: mvn install:install-file -Dfile=aaa.jar -DgroupId=aaa -DartifactId=aaa -Dversion=aaa -Dpackaging=jar -DlocalRepositoryPath=path/to/ProjectKorra/localrepo/ -->
-    <repository>
-      <id>project.local</id>
-      <name>project</name>
-      <url>file://${project.basedir}/localrepo/</url>
-    </repository>
     <!-- WorldGuard and WorldEdit Repo -->
     <repository>
       <id>sk89q-repo</id>
@@ -48,38 +42,57 @@
       <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
     </repository>
   </repositories>
+  <pluginRepositories>
+   <pluginRepository>
+    <id>maven-snapshots</id>
+    <url>https://repository.apache.org/content/repositories/snapshots/</url>
+   </pluginRepository>
+  </pluginRepositories>
   <dependencies>
     <!-- PaperLib -->
     <dependency>
       <groupId>io.papermc</groupId>
       <artifactId>paperlib</artifactId>
-      <version>1.0.1</version>
+      <version>1.0.6</version>
     </dependency>
     <!-- Minecraft Timings -->
     <dependency>
       <groupId>co.aikar</groupId>
       <artifactId>minecraft-timings</artifactId>
       <version>1.0.4</version>
+      <exclusions>
+       <exclusion>
+        <groupId>org.jetbrains</groupId>
+        <artifactId>annotations</artifactId>
+       </exclusion>
+      </exclusions>
     </dependency>
     <!-- Spigot API -->
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.16.1-R0.1-SNAPSHOT</version>
+      <version>1.17.1-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
+      <exclusions>
+       <exclusion>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+       </exclusion>
+      </exclusions>
     </dependency>
     <!-- lang3 -->
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.8.1</version>
-    </dependency>
-    <!-- Factions -->
-    <dependency>
-      <groupId>me.markeh</groupId>
-      <artifactId>factionsframework</artifactId>
-      <version>1.2.0</version>
-      <scope>provided</scope>
+      <version>3.12.0</version>
     </dependency>
     <!-- GriefPrevention -->
     <dependency>
@@ -87,100 +100,225 @@
       <artifactId>GriefPrevention</artifactId>
       <version>16.7.1</version>
       <scope>provided</scope>
-    </dependency>
-    <!-- LWC -->
-    <dependency>
-      <groupId>com.griefcraft</groupId>
-      <artifactId>lwc</artifactId>
-      <version>2.1.2</version>
-      <scope>provided</scope>
+      <exclusions>
+       <exclusion>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>de.schlichtherle</groupId>
+        <artifactId>truezip</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>javax.persistence</groupId>
+        <artifactId>persistence-api</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>org.avaje</groupId>
+        <artifactId>ebean</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>com.thoughtworks.paranamer</groupId>
+        <artifactId>paranamer</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>com.sk89q</groupId>
+        <artifactId>worldguard</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>com.sk89q</groupId>
+        <artifactId>worldedit</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>com.sk89q.worldedit</groupId>
+        <artifactId>worldedit-bukkit</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>rhino</groupId>
+        <artifactId>js</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>org.hamcrest</groupId>
+        <artifactId>hamcrest-core</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>com.sk89q</groupId>
+        <artifactId>dummypermscompat</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>com.sk89q.lib</groupId>
+        <artifactId>jlibnoise</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>com.sk89q</groupId>
+        <artifactId>jchronic</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>net.milkbowl.vault</groupId>
+        <artifactId>VaultAPI</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>com.sk89q.spigot</groupId>
+        <artifactId>bukkit-classloader-check</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>com.sk89q.worldedit</groupId>
+        <artifactId>worldedit-core</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>com.google.code.findbugs</groupId>
+        <artifactId>jsr305</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>com.googlecode.json-simple</groupId>
+        <artifactId>json-simple</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>org.bukkit</groupId>
+        <artifactId>bukkit</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>com.sk89q</groupId>
+        <artifactId>commandbook</artifactId>
+       </exclusion>
+      </exclusions>
     </dependency>
     <!-- NoCheatPlus -->
     <dependency>
       <groupId>fr.neatmonster</groupId>
       <artifactId>nocheatplus</artifactId>
-      <version>3.16.1-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
-    <!-- PreciousStones -->
-    <!-- outdated
-<dependency>
-  <groupId>net.sacredlabyrinth.Phaed</groupId>
-  <artifactId>PreciousStones</artifactId>
-  <version>LATEST</version>
-  <scope>system</scope>
-  <systemPath>${project.basedir}/lib/PreciousStones 10.6.1.jar</systemPath>
-</dependency>
--->
-    <!-- Residence -->
-    <dependency>
-      <groupId>com.bekvon.bukkit</groupId>
-      <artifactId>residence</artifactId>
-      <version>4.8.3.1</version>
-      <scope>provided</scope>
-    </dependency>
-    <!-- Towny -->
-    <dependency>
-      <groupId>com.github.TownyAdvanced</groupId>
-      <artifactId>Towny</artifactId>
-      <version>0.96.2.0</version>
+      <version>3.17-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <!-- WorldEdit / WorldGuard -->
     <dependency>
-      <groupId>com.sk89q.worldedit</groupId>
-      <artifactId>worldedit-core</artifactId>
-      <version>7.0.0-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>com.sk89q.worldguard</groupId>
-      <artifactId>worldguard-core</artifactId>
-      <version>7.0.0-SNAPSHOT</version>
+      <artifactId>worldguard-bukkit</artifactId>
+      <version>7.0.6-SNAPSHOT</version>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.sk89q.worldedit</groupId>
-      <artifactId>worldedit-bukkit</artifactId>
-      <version>7.0.0-SNAPSHOT</version>
-      <scope>provided</scope>
+      <exclusions>
+       <exclusion>
+        <groupId>org.flywaydb</groupId>
+        <artifactId>flyway-core</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>com.sk89q.worldguard.worldguard-libs</groupId>
+        <artifactId>core</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>it.unimi.dsi</groupId>
+        <artifactId>fastutil</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>org.antlr</groupId>
+        <artifactId>ST4</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr4</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>org.abego.treelayout</groupId>
+        <artifactId>org.abego.treelayout.core</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>org.glassfish</groupId>
+        <artifactId>javax.json</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-api</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr4-runtime</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr-runtime</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>com.ibm.icu</groupId>
+        <artifactId>icu4j</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>org.mozilla</groupId>
+        <artifactId>rhino-runtime</artifactId>
+       </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.sk89q.worldguard</groupId>
       <artifactId>worldguard-legacy</artifactId>
       <version>7.0.0-SNAPSHOT</version>
       <scope>provided</scope>
-    </dependency>
-    <!-- RedProtect -->
-    <dependency>
-      <groupId>br.net.fabiozumbi12</groupId>
-      <artifactId>RedProtect</artifactId>
-      <version>7.5.5</version>
-      <scope>provided</scope>
-    </dependency>
-    <!-- Kingdoms -->
-    <dependency>
-      <groupId>com.github.cryptomorin</groupId>
-      <artifactId>kingdoms</artifactId>
-      <version>1.10.19.1</version>
-      <scope>compile</scope>
       <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
+       <exclusion>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>com.googlecode.json-simple</groupId>
+        <artifactId>json-simple</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>org.bukkit</groupId>
+        <artifactId>bukkit</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>com.sk89q</groupId>
+        <artifactId>commandbook</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>com.sk89q.worldedit</groupId>
+        <artifactId>worldedit-bukkit</artifactId>
+       </exclusion>
+       <exclusion>
+        <groupId>org.bstats</groupId>
+        <artifactId>bstats-bukkit</artifactId>
+       </exclusion>
       </exclusions>
     </dependency>
     <!-- PlaceholderAPI -->
     <dependency>
       <groupId>me.clip</groupId>
       <artifactId>placeholderapi</artifactId>
-      <version>2.9.2</version>
+      <version>2.10.10</version>
       <scope>provided</scope>
+      <exclusions>
+       <exclusion>
+        <groupId>org.jetbrains</groupId>
+        <artifactId>annotations</artifactId>
+       </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
   <build>
-    <defaultGoal>clean package install</defaultGoal>
+    <defaultGoal>clean package</defaultGoal>
     <finalName>${project.name}-${project.version}</finalName>
     <sourceDirectory>${project.basedir}/src/</sourceDirectory>
     <resources>
@@ -197,16 +335,15 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.0</version>
+        <version>3.8.1</version>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
+          <release>16</release>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>3.1.1</version>
+        <version>3.2.0</version>
         <configuration>
           <outputDirectory>${dir}</outputDirectory>
         </configuration>
@@ -214,7 +351,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.2.4</version>
+        <version>3.3.0-SNAPSHOT</version>
         <configuration>
           <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
           <filters>

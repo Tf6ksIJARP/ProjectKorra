@@ -3,8 +3,6 @@ package com.projectkorra.projectkorra;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
-import com.bekvon.bukkit.residence.protection.FlagPermissions;
-
 import co.aikar.timings.lib.MCTiming;
 import co.aikar.timings.lib.TimingManager;
 
@@ -32,7 +30,6 @@ import com.projectkorra.projectkorra.hooks.PlaceholderAPIHook;
 import com.projectkorra.projectkorra.hooks.WorldGuardFlag;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.storage.DBConnection;
-import com.projectkorra.projectkorra.util.Metrics;
 import com.projectkorra.projectkorra.util.RevertChecker;
 import com.projectkorra.projectkorra.util.StatisticsManager;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -117,35 +114,7 @@ public class ProjectKorra extends JavaPlugin {
 			}, 30);
 		}
 
-		final Metrics metrics = new Metrics(this);
-		metrics.addCustomChart(new Metrics.AdvancedPie("Elements") {
-
-			@Override
-			public HashMap<String, Integer> getValues(final HashMap<String, Integer> valueMap) {
-				for (final Element element : Element.getMainElements()) {
-					valueMap.put(element.getName(), this.getPlayersWithElement(element));
-				}
-
-				return valueMap;
-			}
-
-			private int getPlayersWithElement(final Element element) {
-				int counter = 0;
-				for (final Player player : Bukkit.getOnlinePlayers()) {
-					final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-					if (bPlayer != null && bPlayer.hasElement(element)) {
-						counter++;
-					}
-				}
-
-				return counter;
-			}
-		});
-
 		final double cacheTime = ConfigManager.getConfig().getDouble("Properties.RegionProtection.CacheBlockTime");
-		if (Bukkit.getPluginManager().getPlugin("Residence") != null) {
-			FlagPermissions.addFlag(ConfigManager.defaultConfig.get().getString("Properties.RegionProtection.Residence.Flag"));
-		}
 
 		GeneralMethods.deserializeFile();
 		GeneralMethods.startCacheCleaner(cacheTime);

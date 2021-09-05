@@ -478,7 +478,7 @@ public class ConfigManager {
 			earthBlocks.add(Material.DIRT.toString());
 			earthBlocks.add(Material.EMERALD_ORE.toString()); // no longer needed in 1.17
 			earthBlocks.add(Material.GRASS_BLOCK.toString());
-			earthBlocks.add(Material.GRASS_PATH.toString());
+			earthBlocks.add(Material.DIRT_PATH.toString());
 			earthBlocks.add(Material.GRAVEL.toString());
 			earthBlocks.add(Material.LAPIS_ORE.toString()); // no longer needed in 1.17
 			earthBlocks.add(Material.MYCELIUM.toString());

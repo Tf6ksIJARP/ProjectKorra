@@ -30,16 +30,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.bekvon.bukkit.residence.Residence;
-import com.bekvon.bukkit.residence.api.ResidenceInterface;
-import com.bekvon.bukkit.residence.protection.ClaimedResidence;
-import com.bekvon.bukkit.residence.protection.ResidencePermissions;
 import com.google.common.reflect.ClassPath;
-import com.griefcraft.lwc.LWC;
-import com.griefcraft.lwc.LWCPlugin;
-import com.griefcraft.model.Protection;
-import com.palmergames.bukkit.towny.object.TownyPermission.ActionType;
-import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -71,13 +62,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-import org.kingdoms.constants.kingdom.Kingdom;
-import org.kingdoms.constants.kingdom.model.KingdomRelation;
-import org.kingdoms.constants.land.Land;
-import org.kingdoms.constants.land.structures.managers.Regulator;
-import org.kingdoms.constants.land.structures.managers.Regulator.Attribute;
-import org.kingdoms.constants.player.DefaultKingdomPermission;
-import org.kingdoms.constants.player.KingdomPlayer;
 
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.Ability;
@@ -124,14 +108,6 @@ import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 
-import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
-import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.API.RedProtectAPI;
-import me.markeh.factionsframework.entities.FPlayer;
-import me.markeh.factionsframework.entities.FPlayers;
-import me.markeh.factionsframework.entities.Faction;
-import me.markeh.factionsframework.entities.Factions;
-import me.markeh.factionsframework.enums.Rel;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -1541,14 +1517,7 @@ public class GeneralMethods {
 	public static boolean isRegionProtectedFromBuildPostCache(final Player player, final String ability, final Location loc) {
 		final boolean allowHarmless = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.AllowHarmlessAbilities");
 		final boolean respectWorldGuard = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectWorldGuard");
-		//final boolean respectPreciousStones = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectPreciousStones");
-		final boolean respectFactions = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectFactions");
-		final boolean respectTowny = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectTowny");
 		final boolean respectGriefPrevention = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectGriefPrevention");
-		final boolean respectLWC = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectLWC");
-		final boolean respectResidence = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Residence.Respect");
-		final boolean respectKingdoms = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Kingdoms.Respect");
-		final boolean respectRedProtect = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectRedProtect");
 
 		boolean isIgnite = false;
 		boolean isExplosive = false;
@@ -1570,28 +1539,11 @@ public class GeneralMethods {
 		final PluginManager pm = Bukkit.getPluginManager();
 
 		final Plugin wgp = pm.getPlugin("WorldGuard");
-		//final Plugin psp = pm.getPlugin("PreciousStones");
-		final Plugin facsfw = pm.getPlugin("FactionsFramework");
-		final Plugin twnp = pm.getPlugin("Towny");
 		final Plugin gpp = pm.getPlugin("GriefPrevention");
-		final Plugin lwc = pm.getPlugin("LWC");
-		final Plugin residence = pm.getPlugin("Residence");
-		final Plugin kingdoms = pm.getPlugin("Kingdoms");
-		final Plugin redprotect = pm.getPlugin("RedProtect");
 
 		for (final Location location : new Location[] { loc, player.getLocation() }) {
 			final World world = location.getWorld();
 
-			if (lwc != null && respectLWC) {
-				final LWCPlugin lwcp = (LWCPlugin) lwc;
-				final LWC lwc2 = lwcp.getLWC();
-				final Protection protection = lwc2.getProtectionCache().getProtection(location.getBlock());
-				if (protection != null) {
-					if (!lwc2.canAccessProtection(player, protection)) {
-						return true;
-					}
-				}
-			}
 			if (wgp != null && respectWorldGuard && !player.hasPermission("worldguard.region.bypass." + world.getName())) {
 				final WorldGuard wg = WorldGuard.getInstance();
 				if (!player.isOnline()) {
@@ -1630,22 +1582,6 @@ public class GeneralMethods {
 				}
 			}
 
-			if (facsfw != null && respectFactions) {
-				final FPlayer fPlayer = FPlayers.getBySender(player);
-				final Faction faction = Factions.getFactionAt(location);
-				final Rel relation = fPlayer.getRelationTo(faction);
-
-				if (!(faction.isNone() || fPlayer.getFaction().equals(faction) || relation == Rel.ALLY)) {
-					return true;
-				}
-			}
-
-			if (twnp != null && respectTowny) {
-				if (!PlayerCacheUtil.getCachePermission(player, location, Material.DIRT, ActionType.BUILD)) {
-					return true;
-				}
-			}
-
 			if (gpp != null && respectGriefPrevention) {
 				Material type = player.getWorld().getBlockAt(location).getType();
 				if (type == null) {
@@ -1656,44 +1592,6 @@ public class GeneralMethods {
 				final Claim claim = GriefPrevention.instance.dataStore.getClaimAt(loc, true, null);
 
 				if (reason != null && claim != null) {
-					return true;
-				}
-			}
-
-			if (residence != null && respectResidence) {
-				final ResidenceInterface res = Residence.getInstance().getResidenceManagerAPI();
-				final ClaimedResidence claim = res.getByLoc(location);
-				if (claim != null) {
-					final ResidencePermissions perms = claim.getPermissions();
-					if (!perms.hasApplicableFlag(player.getName(), ConfigManager.getConfig().getString("Properties.RegionProtection.Residence.Flag"))) {
-						return true;
-					}
-				}
-			}
-
-			if (kingdoms != null && respectKingdoms) {
-				final KingdomPlayer kPlayer = KingdomPlayer.getKingdomPlayer(player);
-				final Land land = Land.getLand(location);
-				final boolean protectDuringInvasions = ConfigManager.getConfig().getBoolean("Properties.RegionProtection.Kingdoms.ProtectDuringInvasions");
-				if (land != null) {
-					final Kingdom kingdom = land.getKingdom();
-					if (kPlayer.isAdmin()
-							|| (!protectDuringInvasions && !land.getInvasions().isEmpty() && land.getInvasions().values().stream().anyMatch(i -> i.getInvader().equals(kPlayer))) // Protection during invasions is off, and player is currently invading; allow
-							|| (land.getStructure() != null && land.getStructure() instanceof Regulator && ((Regulator) land.getStructure()).hasAttribute(player, Attribute.BUILD))) { // There is a regulator on site which allows the player to build; allow
-						return false;
-					}
-					if (!kPlayer.hasKingdom() // Player has no kingdom; deny
-							|| (kPlayer.getKingdom().equals(kingdom) && !kPlayer.hasPermission(DefaultKingdomPermission.BUILD)) // Player is a member of this kingdom but cannot build here; deny
-							|| (!kPlayer.getKingdom().equals(kingdom) && !kPlayer.getKingdom().hasAttribute(kingdom, KingdomRelation.Attribute.BUILD))) { // Player is not a member of this kingdom and cannot build here; deny
-						return true;
-					}
-				}
-			}
-
-			if (redprotect != null && respectRedProtect) {
-				final RedProtectAPI api = RedProtect.get().getAPI();
-				final Region region = api.getRegion(location);
-				if (!(region != null && region.canBuild(player))) {
 					return true;
 				}
 			}
