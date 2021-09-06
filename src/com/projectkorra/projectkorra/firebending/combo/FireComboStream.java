@@ -1,19 +1,5 @@
 package com.projectkorra.projectkorra.firebending.combo;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.Sound;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -23,6 +9,19 @@ import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.bukkit.Effect;
+import org.bukkit.Location;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 /***
  * Is only here for legacy purposes. All fire combos used to use a form of this
@@ -123,7 +122,7 @@ public class FireComboStream extends BukkitRunnable {
 		if (GeneralMethods.isRegionProtectedFromBuild(this.player, "Blaze", entity.getLocation())) {
 			return;
 		}
-		entity.getLocation().getWorld().playSound(entity.getLocation(), Sound.ENTITY_VILLAGER_HURT, 0.3f, 0.3f);
+		entity.getLocation().getWorld().playSound(entity.getLocation(), Sound.ENTITY_VILLAGER_HURT, SoundCategory.BLOCKS, 0.3f, 0.3f);
 
 		if (coreAbility.getName().equalsIgnoreCase("FireKick")) {
 			final FireKick fireKick = CoreAbility.getAbility(this.player, FireKick.class);

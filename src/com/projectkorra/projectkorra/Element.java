@@ -1,14 +1,13 @@
 package com.projectkorra.projectkorra;
 
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import org.bukkit.ChatColor;
+import org.bukkit.plugin.Plugin;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-
-import org.bukkit.ChatColor;
-import org.bukkit.plugin.Plugin;
-
-import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 public class Element {
 

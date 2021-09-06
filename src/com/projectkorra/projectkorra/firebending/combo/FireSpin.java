@@ -1,16 +1,5 @@
 package com.projectkorra.projectkorra.firebending.combo;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ComboAbility;
@@ -19,6 +8,17 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.ClickType;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FireSpin extends FireAbility implements ComboAbility {
 
@@ -90,7 +90,7 @@ public class FireSpin extends FireAbility implements ComboAbility {
 			}
 			this.bPlayer.addCooldown("FireSpin", this.cooldown);
 			this.destination = this.player.getEyeLocation().add(this.range, 0, this.range);
-			this.player.getWorld().playSound(this.player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 0.5f, 0.5f);
+			this.player.getWorld().playSound(this.player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, SoundCategory.BLOCKS, 0.5f, 0.5f);
 
 			for (int i = 0; i <= 360; i += 5) {
 				Vector vec = GeneralMethods.getDirection(this.player.getLocation(), this.destination.clone());

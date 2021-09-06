@@ -1,15 +1,18 @@
 package com.projectkorra.projectkorra.airbending;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
+import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
+import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.TempBlock;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Levelled;
@@ -23,18 +26,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.ability.util.Collision;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
-import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
-import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AirBlast extends AirAbility {
 
@@ -366,7 +362,7 @@ public class AirBlast extends AirAbility {
 
 					door.setOpen(!door.isOpen());
 					testblock.setBlockData(door);
-					testblock.getWorld().playSound(testblock.getLocation(), Sound.valueOf("BLOCK_WOODEN_DOOR_" + (door.isOpen() ? "OPEN" : "CLOSE")), 0.5f, 0);
+					testblock.getWorld().playSound(testblock.getLocation(), Sound.valueOf("BLOCK_WOODEN_DOOR_" + (door.isOpen() ? "OPEN" : "CLOSE")), SoundCategory.BLOCKS, 0.5f, 0);
 					this.affectedLevers.add(testblock);
 				}
 			} else if (Arrays.asList(TDOORS).contains(testblock.getType())) {
@@ -387,7 +383,7 @@ public class AirBlast extends AirAbility {
 
 					tDoor.setOpen(!tDoor.isOpen());
 					testblock.setBlockData(tDoor);
-					testblock.getWorld().playSound(testblock.getLocation(), Sound.valueOf("BLOCK_WOODEN_TRAPDOOR_" + (tDoor.isOpen() ? "OPEN" : "CLOSE")), 0.5f, 0);
+					testblock.getWorld().playSound(testblock.getLocation(), Sound.valueOf("BLOCK_WOODEN_TRAPDOOR_" + (tDoor.isOpen() ? "OPEN" : "CLOSE")), SoundCategory.BLOCKS, 0.5f, 0);
 				}
 			} else if (Arrays.asList(BUTTONS).contains(testblock.getType())) {
 				if (testblock.getBlockData() instanceof Switch) {
@@ -404,13 +400,13 @@ public class AirBlast extends AirAbility {
 								button.setPowered(false);
 								testblock.setBlockData(button);
 								AirBlast.this.affectedLevers.remove(testblock);
-								testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF, 0.5f, 0);
+								testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF, SoundCategory.BLOCKS, 0.5f, 0);
 							}
 
 						}.runTaskLater(ProjectKorra.plugin, 15);
 					}
 
-					testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_ON, 0.5f, 0);
+					testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_ON, SoundCategory.BLOCKS, 0.5f, 0);
 				}
 			} else if (testblock.getType() == Material.LEVER) {
 				if (testblock.getBlockData() instanceof Switch) {
@@ -418,7 +414,7 @@ public class AirBlast extends AirAbility {
 					lever.setPowered(!lever.isPowered());
 					testblock.setBlockData(lever);
 					this.affectedLevers.add(testblock);
-					testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_LEVER_CLICK, 0.5f, 0);
+					testblock.getWorld().playSound(testblock.getLocation(), Sound.BLOCK_LEVER_CLICK, SoundCategory.BLOCKS, 0.5f, 0);
 				}
 			}
 		}

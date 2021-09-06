@@ -1,12 +1,11 @@
 package com.projectkorra.projectkorra.configuration;
 
-import java.io.File;
-import java.util.ArrayList;
-
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import net.md_5.bungee.api.ChatColor;
+import java.io.File;
+import java.util.ArrayList;
 
 public class ConfigManager {
 

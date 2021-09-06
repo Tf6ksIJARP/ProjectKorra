@@ -1,18 +1,18 @@
 package com.projectkorra.projectkorra.earthbending.passive;
 
-import java.util.HashSet;
-
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.MetalAbility;
+import com.projectkorra.projectkorra.ability.PassiveAbility;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Door;
 import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.MetalAbility;
-import com.projectkorra.projectkorra.ability.PassiveAbility;
+import java.util.HashSet;
 
 public class FerroControl extends MetalAbility implements PassiveAbility {
 
@@ -58,7 +58,7 @@ public class FerroControl extends MetalAbility implements PassiveAbility {
 
 		if (used) {
 			final String sound = "BLOCK_IRON_" + (tDoor ? "TRAP" : "") + "DOOR_" + (open ? "OPEN" : "CLOSE");
-			this.block.getWorld().playSound(this.block.getLocation(), Sound.valueOf(sound), 0.5f, 0);
+			this.block.getWorld().playSound(this.block.getLocation(), Sound.valueOf(sound), SoundCategory.BLOCKS, 0.5f, 0);
 			this.bPlayer.addCooldown(this, 200);
 		}
 		this.remove();

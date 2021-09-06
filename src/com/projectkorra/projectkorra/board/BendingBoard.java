@@ -1,10 +1,13 @@
 package com.projectkorra.projectkorra.board;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -12,26 +15,19 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
-
-import net.md_5.bungee.api.ChatColor;
+import java.util.*;
 
 /**
  * Represents a player's scoreboard for bending purposes
  */
 public class BendingBoard {
-	
 	public static class BoardSlot {
 		
-		private Scoreboard board;
-		private Objective obj;
+		private final Scoreboard board;
+		private final Objective obj;
 		private int slot;
-		private Team team;
-		private String entry;
+		private final Team team;
+		private final String entry;
 		private Optional<BoardSlot> next = Optional.empty();
 		
 		@SuppressWarnings("deprecation")
@@ -46,7 +42,9 @@ public class BendingBoard {
 		}
 		
 		private void set() {
-			obj.getScore(entry).setScore(-slot);
+			if (board.getObjective(obj.getName()) != null) {
+				obj.getScore(entry).setScore(-slot);
+			}
 		}
 		
 		public void update(String prefix, String name) {
@@ -77,26 +75,20 @@ public class BendingBoard {
 	}
 	
 	private final BoardSlot[] slots = new BoardSlot[9];
-	private final Map<String, BoardSlot> misc = new HashMap<>();
-	private BoardSlot miscTail = null;
-
-	private final Player player;
-	private final BendingPlayer bendingPlayer;
-
-	private final Scoreboard bendingBoard;
+	private final Multimap <String, BoardSlot> misc = ArrayListMultimap.create();
 	private final Objective bendingSlots;
-	private int selectedSlot;
+	private final Scoreboard bendingBoard;
+	protected int selectedSlot;
+	private final UUID uuid;
+	private BoardSlot miscTail = null;
 	
 	private String prefix, emptySlot, miscSeparator;
-	private ChatColor selectedColor, altColor;
+	protected ChatColor selectedColor, altColor;
 
 	public BendingBoard(final BendingPlayer bPlayer) {
-		bendingPlayer = bPlayer;
-		player = bPlayer.getPlayer();
-		selectedSlot = player.getInventory().getHeldItemSlot() + 1;
-
+		uuid = bPlayer.getUUID();
+		selectedSlot = bPlayer.getPlayer().getInventory().getHeldItemSlot() + 1;
 		bendingBoard = Bukkit.getScoreboardManager().getNewScoreboard();
-		
 		String title = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Board.Title"));
 		bendingSlots = bendingBoard.registerNewObjective("Board Slots", "dummy", title);
 		bendingSlots.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -118,6 +110,14 @@ public class BendingBoard {
 	}
 	
 	private ChatColor getElementColor() {
+		Player player = Bukkit.getPlayer(uuid);
+		if (player == null) {
+			return ChatColor.WHITE;
+		}
+		BendingPlayer bendingPlayer = BendingPlayer.getBendingPlayer(player);
+		if (bendingPlayer == null) {
+			return ChatColor.WHITE;
+		}
 		if (bendingPlayer.getElements().size() > 1) {
 			return Element.AVATAR.getColor().asBungee();
 		} else if (bendingPlayer.getElements().size() == 1) {
@@ -141,15 +141,27 @@ public class BendingBoard {
 	}
 
 	public void hide() {
+		Player player = Bukkit.getPlayer(uuid);
+		if (player == null) {
+			return;
+		}
 		player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
 	}
 
 	public void show() {
+		Player player = Bukkit.getPlayer(uuid);
+		if (player == null) {
+			return;
+		}
 		player.setScoreboard(bendingBoard);
 		updateAll();
 	}
 
 	public boolean isVisible() {
+		Player player = Bukkit.getPlayer(uuid);
+		if (player == null) {
+			return false;
+		}
 		return player.getScoreboard().equals(bendingBoard);
 	}
 
@@ -162,7 +174,8 @@ public class BendingBoard {
 	}
 
 	public void setSlot(int slot, String ability, boolean cooldown) {
-		if (slot < 1 || slot > 9 || !player.getScoreboard().equals(bendingBoard)) {
+		Player player = Bukkit.getPlayer(uuid);
+		if (player == null || slot < 1 || slot > 9 || !player.getScoreboard().equals(bendingBoard)) {
 			return;
 		}
 		
@@ -171,13 +184,19 @@ public class BendingBoard {
 		if (ability == null || ability.isEmpty()) {
 			sb.append(emptySlot.replaceAll("\\{slot_number\\}", "" + slot));
 		} else {
+			BendingPlayer bendingPlayer = BendingPlayer.getBendingPlayer(player);
+			if (bendingPlayer == null) {
+				return;
+			}
 			CoreAbility coreAbility = CoreAbility.getAbility(ChatColor.stripColor(ability));
 			if (coreAbility == null) { // MultiAbility
 				if (cooldown || bendingPlayer.isOnCooldown(ability)) {
 					sb.append(ChatColor.STRIKETHROUGH);
 				}
-				
 				sb.append(ability);
+			} else if (cooldown) {
+				new CooldownTask(ability, bendingPlayer, this.slots, this, slot).runTaskTimer(ProjectKorra.plugin, 0L, 20L);
+				return;
 			} else {
 				sb.append(coreAbility.getMovePreviewWithoutCooldownTimer(player, cooldown));
 			}
@@ -198,6 +217,14 @@ public class BendingBoard {
 	}
 
 	public void updateAll() {
+		Player player = Bukkit.getPlayer(uuid);
+		if (player == null) {
+			return;
+		}
+		BendingPlayer bendingPlayer = BendingPlayer.getBendingPlayer(player);
+		if (bendingPlayer == null) {
+			return;
+		}
 		updateColors();
 		selectedSlot = player.getInventory().getHeldItemSlot() + 1;
 		for (int i = 1; i <= 9; i++) {
@@ -210,31 +237,50 @@ public class BendingBoard {
 	}
 
 	public void setActiveSlot(int newSlot) {
+		Player player = Bukkit.getPlayer(uuid);
+		if (player == null) {
+			return;
+		}
+		BendingPlayer bendingPlayer = BendingPlayer.getBendingPlayer(player);
+		if (bendingPlayer == null) {
+			return;
+		}
 		int oldSlot = updateSelected(newSlot);
 		setSlot(oldSlot, bendingPlayer.getAbilities().get(oldSlot), false);
 		setSlot(newSlot, bendingPlayer.getAbilities().get(newSlot), false);
 	}
 
 	public void setAbilityCooldown(String name, boolean cooldown) {
+		Player player = Bukkit.getPlayer(uuid);
+		if (player == null) {
+			return;
+		}
+		BendingPlayer bendingPlayer = BendingPlayer.getBendingPlayer(player);
+		if (bendingPlayer == null) {
+			return;
+		}
 		bendingPlayer.getAbilities().entrySet().stream().filter(entry -> name.equals(entry.getValue())).forEach(entry -> setSlot(entry.getKey(), name, cooldown));
 	}
 	
 	public void updateMisc(String name, ChatColor color, boolean cooldown) {
 		if (!cooldown) {
-			misc.computeIfPresent(name, (key, slot) -> {
-				if (slot == miscTail) {
+			for (Iterator<Map.Entry<String, BoardSlot>> it = misc.entries().iterator(); it.hasNext();) {
+				Map.Entry<String, BoardSlot> slot = it.next();
+				if (miscTail == slot.getValue()) {
 					miscTail = null;
 				}
-				
-				slot.clear();
-				return null;
-			});
+
+				slot.getValue().clear();
+				it.remove();
+				return;
+			}
 				
 			if (misc.isEmpty()) {
 				bendingBoard.resetScores(miscSeparator);
 			}
 		} else if (!misc.containsKey(name)) {
 			BoardSlot slot = new BoardSlot(bendingBoard, bendingSlots, 10 + misc.size());
+			misc.put(name, slot);
 			slot.update(String.join("", Collections.nCopies(ChatColor.stripColor(prefix).length() + 1, " ")), color + "" + ChatColor.STRIKETHROUGH + name);
 			
 			if (miscTail != null) {
@@ -242,7 +288,6 @@ public class BendingBoard {
 			}
 			
 			miscTail = slot;
-			misc.put(name, slot);
 			bendingSlots.getScore(miscSeparator).setScore(-10);
 		}	
 	}

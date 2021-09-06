@@ -1,11 +1,5 @@
 package com.projectkorra.projectkorra.firebending.combo;
 
-import java.util.ArrayList;
-
-import org.bukkit.Location;
-import org.bukkit.Sound;
-import org.bukkit.entity.Player;
-
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
@@ -14,6 +8,12 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.firebending.FireJet;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+import org.bukkit.Location;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
 
 public class JetBlast extends FireAbility implements ComboAbility {
 
@@ -82,7 +82,7 @@ public class JetBlast extends FireAbility implements ComboAbility {
 				this.firstTime = false;
 				final float spread = 0F;
 				ParticleEffect.EXPLOSION_LARGE.display(this.player.getLocation(), 1, spread, spread, spread, 0);
-				this.player.getWorld().playSound(this.player.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 15, 0F);
+				this.player.getWorld().playSound(this.player.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 15, 0F);
 			}
 			final FireJet fj = getAbility(this.player, FireJet.class);
 			fj.setSpeed(this.speed);

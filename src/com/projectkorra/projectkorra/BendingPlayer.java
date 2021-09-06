@@ -1,26 +1,5 @@
 package com.projectkorra.projectkorra;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
-import com.projectkorra.projectkorra.event.PlayerStanceChangeEvent;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AvatarAbility;
@@ -34,10 +13,25 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.metal.MetalClips;
 import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent.Result;
+import com.projectkorra.projectkorra.event.PlayerStanceChangeEvent;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.Cooldown;
 import com.projectkorra.projectkorra.util.DBCooldownManager;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Class that presents a player and stores all bending information about the
@@ -57,7 +51,6 @@ public class BendingPlayer {
 	private boolean illumination;
 	private boolean chiBlocked;
 	private long slowTime;
-	private final Player player;
 	private final UUID uuid;
 	private final String name;
 	private ChiAbility stance;
@@ -85,7 +78,6 @@ public class BendingPlayer {
 		this.subelements = subelements;
 		this.setAbilities(abilities);
 		this.permaRemoved = permaRemoved;
-		this.player = Bukkit.getPlayer(uuid);
 		this.toggled = true;
 		this.tremorSense = true;
 		this.illumination = true;
@@ -134,7 +126,10 @@ public class BendingPlayer {
 		if (cooldown <= 0) {
 			return;
 		}
-		final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(player, ability, cooldown, Result.ADDED);
+		if (Bukkit.getPlayerExact(name) == null || Bukkit.getPlayer(uuid) == null) {
+			return;
+		}
+		final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(Bukkit.getPlayer(uuid), ability, cooldown, Result.ADDED);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 
 		if (!event.isCancelled()) {
@@ -248,25 +243,28 @@ public class BendingPlayer {
 		if (ability == null) {
 			return false;
 		}
-
+		Player player = Bukkit.getPlayer(uuid);
+		if (player == null) {
+			return false;
+		}
 		final List<String> disabledWorlds = getConfig().getStringList("Properties.DisabledWorlds");
-		final Location playerLoc = this.player.getLocation();
+		final Location playerLoc = player.getLocation();
 
-		if (!this.player.isOnline() || this.player.isDead()) {
+		if (!player.isOnline() || player.isDead()) {
 			return false;
 		} else if (!this.canBind(ability)) {
 			return false;
-		} else if (ability.getPlayer() != null && ability.getLocation() != null && !ability.getLocation().getWorld().equals(this.player.getWorld())) {
+		} else if (ability.getPlayer() != null && ability.getLocation() != null && !ability.getLocation().getWorld().equals(player.getWorld())) {
 			return false;
 		} else if (!ignoreCooldowns && this.isOnCooldown(ability.getName())) {
 			return false;
 		} else if (!ignoreBinds && (!ability.getName().equals(this.getBoundAbilityName()))) {
 			return false;
-		} else if (disabledWorlds != null && disabledWorlds.contains(this.player.getWorld().getName())) {
+		} else if (disabledWorlds != null && disabledWorlds.contains(player.getWorld().getName())) {
 			return false;
 		} else if (Commands.isToggledForAll || !this.isToggled() || !this.isElementToggled(ability.getElement())) {
 			return false;
-		} else if (this.player.getGameMode() == GameMode.SPECTATOR) {
+		} else if (player.getGameMode() == GameMode.SPECTATOR) {
 			return false;
 		}
 
@@ -280,7 +278,7 @@ public class BendingPlayer {
 
 		if (this.isChiBlocked() || this.isParalyzed() || (this.isBloodbent() && !ability.getName().equalsIgnoreCase("AvatarState")) || this.isControlledByMetalClips()) {
 			return false;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(this.player, ability.getName(), playerLoc)) {
+		} else if (GeneralMethods.isRegionProtectedFromBuild(player, ability.getName(), playerLoc)) {
 			return false;
 		}
 
@@ -309,18 +307,18 @@ public class BendingPlayer {
 		}
 
 		final List<String> disabledWorlds = getConfig().getStringList("Properties.DisabledWorlds");
-
-		if (element == null || this.player == null) {
+		Player player = Bukkit.getPlayer(uuid);
+		if (element == null || player == null) {
 			return false;
-		} else if (!this.player.hasPermission("bending." + element.getName() + ".passive")) {
+		} else if (!player.hasPermission("bending." + element.getName() + ".passive")) {
 			return false;
-		} else if (!this.player.hasPermission("bending.ability." + ability.getName())) {
+		} else if (!player.hasPermission("bending.ability." + ability.getName())) {
 			return false;
 		} else if (!this.hasElement(element)) {
 			return false;
-		} else if (disabledWorlds != null && disabledWorlds.contains(this.player.getWorld().getName())) {
+		} else if (disabledWorlds != null && disabledWorlds.contains(player.getWorld().getName())) {
 			return false;
-		} else if (this.player.getGameMode() == GameMode.SPECTATOR) {
+		} else if (player.getGameMode() == GameMode.SPECTATOR) {
 			return false;
 		}
 
@@ -329,11 +327,12 @@ public class BendingPlayer {
 
 	public boolean canUsePassive(final CoreAbility ability) {
 		final Element element = ability.getElement();
-		if (!this.isToggled() || !this.isElementToggled(element)) {
+		Player player = Bukkit.getPlayer(uuid);
+		if (!this.isToggled() || !this.isElementToggled(element) || player == null) {
 			return false;
 		} else if (this.isChiBlocked() || this.isParalyzed() || this.isBloodbent()) {
 			return false;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(this.player, this.player.getLocation())) {
+		} else if (GeneralMethods.isRegionProtectedFromBuild(player, player.getLocation())) {
 			return false;
 		} else if (this.isOnCooldown(ability)) {
 			return false;
@@ -343,8 +342,9 @@ public class BendingPlayer {
 	}
 
 	public boolean canCurrentlyBendWithWeapons() {
-		if (this.getBoundAbility() != null && this.player.getInventory().getItemInMainHand() != null) {
-			final boolean hasWeapon = GeneralMethods.isWeapon(this.player.getInventory().getItemInMainHand().getType());
+		Player player = Bukkit.getPlayer(uuid);
+		if (player != null && this.getBoundAbility() != null && player.getInventory().getItemInMainHand() != null) {
+			final boolean hasWeapon = GeneralMethods.isWeapon(player.getInventory().getItemInMainHand().getType());
 			final boolean noWeaponElement = GeneralMethods.getElementsWithNoWeaponBending().contains(this.getBoundAbility().getElement());
 
 			if (hasWeapon) {
@@ -371,9 +371,10 @@ public class BendingPlayer {
 	}
 
 	public boolean canBind(final CoreAbility ability) {
-		if (ability == null || !this.player.isOnline() || !ability.isEnabled()) {
+		Player player = Bukkit.getPlayer(uuid);
+		if (ability == null || player == null || !player.isOnline() || !ability.isEnabled()) {
 			return false;
-		} else if (!this.player.hasPermission("bending.ability." + ability.getName())) {
+		} else if (!player.hasPermission("bending.ability." + ability.getName())) {
 			return false;
 		} else if (!this.hasElement(ability.getElement()) && !(ability instanceof AvatarAbility && !((AvatarAbility) ability).requireAvatar())) {
 			return false;
@@ -401,7 +402,8 @@ public class BendingPlayer {
 	}
 
 	public boolean canBloodbendAtAnytime() {
-		return this.canBloodbend() && this.player.hasPermission("bending.water.bloodbending.anytime");
+		Player player = Bukkit.getPlayer(uuid);
+		return this.canBloodbend() && player != null && player.hasPermission("bending.water.bloodbending.anytime");
 	}
 
 	public boolean canCombustionbend() {
@@ -504,20 +506,8 @@ public class BendingPlayer {
 		return this.abilities;
 	}
 
-	public static BendingPlayer getBendingPlayer(final OfflinePlayer oPlayer) {
-		if (oPlayer == null) {
-			return null;
-		}
-
-		return BendingPlayer.getPlayers().get(oPlayer.getUniqueId());
-	}
-
-	public static BendingPlayer getBendingPlayer(final Player player) {
-		if (player == null) {
-			return null;
-		}
-
-		return getBendingPlayer((OfflinePlayer)player);
+	public static BendingPlayer getBendingPlayer(final @NotNull Player player) {
+		return BendingPlayer.getPlayers().get(player.getUniqueId());
 	}
 
 	/**
@@ -531,15 +521,12 @@ public class BendingPlayer {
 	 *
 	 * @see #getBendingPlayer(UUID)
 	 */
-	public static BendingPlayer getBendingPlayer(final String playerName) {
-		if (playerName == null) {
-			return null;
-		}
-
+	public static BendingPlayer getBendingPlayer(final @NotNull String playerName) {
 		final Player player = Bukkit.getPlayer(playerName);
-		final OfflinePlayer oPlayer = player != null ? Bukkit.getOfflinePlayer(player.getUniqueId()) : null;
-
-		return getBendingPlayer(oPlayer);
+		if (player != null) {
+			return getBendingPlayer(player);
+		}
+		throw new IllegalArgumentException(playerName + " not found");
 	}
 
 	private static FileConfiguration getConfig() {
@@ -556,10 +543,14 @@ public class BendingPlayer {
 	 * @return The Ability name bounded to the slot
 	 */
 	public String getBoundAbilityName() {
-		final int slot = this.player.getInventory().getHeldItemSlot() + 1;
-		final String name = this.getAbilities().get(slot);
+		final Player player = Bukkit.getPlayer(uuid);
+		if (player != null) {
+			final int slot = player.getInventory().getHeldItemSlot() + 1;
+			final String name = this.getAbilities().get(slot);
 
-		return name != null ? name : "";
+			return name != null ? name : "";
+		}
+		throw new IllegalArgumentException(name + " not found");
 	}
 
 	/**
@@ -612,7 +603,7 @@ public class BendingPlayer {
 	 * @return Player object this BendingPlayer is wrapping.
 	 */
 	public Player getPlayer() {
-		return this.player;
+		return Bukkit.getPlayer(uuid);
 	}
 
 	/**
@@ -666,13 +657,14 @@ public class BendingPlayer {
 	 * @param element The element to check
 	 * @return true If the player knows the element
 	 */
-	public boolean hasElement(final Element element) {
-		if (element == null) {
+	public boolean hasElement(final @NotNull Element element) {
+		Player player = Bukkit.getPlayer(uuid);
+		if (player == null) {
 			return false;
 		} else if (element == Element.AVATAR) {
 			// At the moment we'll allow for both permissions to return true.
 			// Later on we can consider deleting the bending.ability.avatarstate option.
-			return this.player.hasPermission("bending.avatar") || this.player.hasPermission("bending.ability.AvatarState");
+			return player.hasPermission("bending.avatar") || player.hasPermission("bending.ability.AvatarState");
 		} else if (!(element instanceof SubElement)) {
 			return this.elements.contains(element);
 		} else {
@@ -693,20 +685,29 @@ public class BendingPlayer {
 	 *
 	 * @param sub The SubElement
 	 */
-	public boolean hasSubElementPermission(final SubElement sub) {
-		if (sub == null) {
+	public boolean hasSubElementPermission(final @NotNull SubElement sub) {
+		Player player = Bukkit.getPlayer(uuid);
+		if (player == null) {
 			return false;
 		}
 
-		return this.player.hasPermission("bending." + sub.getParentElement().getName().toLowerCase() + "." + sub.getName().toLowerCase() + sub.getType().getBending());
+		return player.hasPermission("bending." + sub.getParentElement().getName().toLowerCase() + "." + sub.getName().toLowerCase() + sub.getType().getBending());
 	}
 
 	public boolean isAvatarState() {
-		return CoreAbility.hasAbility(this.player, AvatarState.class);
+		Player player = Bukkit.getPlayer(uuid);
+		if (player == null) {
+			return false;
+		}
+		return CoreAbility.hasAbility(player, AvatarState.class);
 	}
 
 	public boolean isBloodbent() {
-		return Bloodbending.isBloodbent(this.player);
+		Player player = Bukkit.getPlayer(uuid);
+		if (player == null) {
+			return false;
+		}
+		return Bloodbending.isBloodbent(player);
 	}
 
 	/**
@@ -728,7 +729,8 @@ public class BendingPlayer {
 	}
 
 	public boolean isControlledByMetalClips() {
-		return MetalClips.isControlled(this.player);
+		Player player = Bukkit.getPlayer(uuid);
+		return MetalClips.isControlled(player);
 	}
 
 	public boolean isElementToggled(final Element element) {
@@ -758,7 +760,11 @@ public class BendingPlayer {
 	}
 
 	public boolean isParalyzed() {
-		return this.player.hasMetadata("movement:stop");
+		Player player = Bukkit.getPlayer(uuid);
+		if (player == null) {
+			return false;
+		}
+		return player.hasMetadata("movement:stop");
 	}
 
 	/**
@@ -809,7 +815,10 @@ public class BendingPlayer {
 	 * @param ability The ability's cooldown to remove
 	 */
 	public void removeCooldown(final String ability) {
-		final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(player, ability, 0, Result.REMOVED);
+		if (Bukkit.getPlayerExact(name) == null || Bukkit.getPlayer(uuid) == null) {
+			return;
+		}
+		final PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(Bukkit.getPlayer(uuid), ability, 0, Result.REMOVED);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (!event.isCancelled()) {
 			this.cooldowns.remove(ability);
@@ -872,6 +881,10 @@ public class BendingPlayer {
 	 * @param stance The player's new stance object
 	 */
 	public void setStance(final ChiAbility stance) {
+		Player player = Bukkit.getPlayer(uuid);
+		if (player == null) {
+			return;
+		}
 		final String oldStance = (this.stance == null) ? "" : this.stance.getName();
 		final String newStance = (stance == null) ? "" : stance.getName();
 		this.stance = stance;
@@ -893,17 +906,22 @@ public class BendingPlayer {
 	 * Toggles the {@link BendingPlayer}'s bending.
 	 */
 	public void toggleBending() {
+		Player player = Bukkit.getPlayer(uuid);
+		if (player == null) {
+			return;
+		}
 		this.toggled = !this.toggled;
-		PassiveManager.registerPassives(this.player);
+		PassiveManager.registerPassives(player);
 	}
 
-	public void toggleElement(final Element element) {
-		if (element == null) {
+	public void toggleElement(final @NotNull Element element) {
+		Player player = Bukkit.getPlayer(uuid);
+		if (player == null) {
 			return;
 		}
 
 		this.toggledElements.put(element, !this.toggledElements.get(element));
-		PassiveManager.registerPassives(this.player);
+		PassiveManager.registerPassives(player);
 	}
 
 	/**

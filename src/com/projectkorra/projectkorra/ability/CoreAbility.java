@@ -1,57 +1,15 @@
 package com.projectkorra.projectkorra.ability;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListMap;
-import java.util.jar.JarFile;
-
-import sun.reflect.ReflectionFactory;
-
-import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.commons.lang3.tuple.Pair;
-
+import co.aikar.timings.lib.MCTiming;
 import com.google.common.reflect.ClassPath;
 import com.google.common.reflect.ClassPath.ClassInfo;
-
-import co.aikar.timings.lib.MCTiming;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.Manager;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.util.AbilityLoader;
-import com.projectkorra.projectkorra.ability.util.AddonAbilityLoader;
-import com.projectkorra.projectkorra.ability.util.Collision;
-import com.projectkorra.projectkorra.ability.util.CollisionManager;
-import com.projectkorra.projectkorra.ability.util.ComboManager;
-import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
+import com.projectkorra.projectkorra.ability.util.*;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager.MultiAbilityInfo;
-import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.attribute.AttributeModifier;
 import com.projectkorra.projectkorra.attribute.AttributePriority;
@@ -61,6 +19,28 @@ import com.projectkorra.projectkorra.event.AbilityProgressEvent;
 import com.projectkorra.projectkorra.event.AbilityStartEvent;
 import com.projectkorra.projectkorra.util.FlightHandler;
 import com.projectkorra.projectkorra.util.TimeUtil;
+import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.commons.lang3.tuple.Pair;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+import sun.reflect.ReflectionFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.jar.JarFile;
 
 /**
  * CoreAbility provides default implementation of an Ability, including methods
@@ -92,9 +72,9 @@ public abstract class CoreAbility implements Ability {
 	private static int idCounter;
 	private static long currentTick;
 
-	protected Player player;
-	protected BendingPlayer bPlayer;
-	protected FlightHandler flightHandler;
+	public Player player;
+	public BendingPlayer bPlayer;
+	public FlightHandler flightHandler;
 
 	private final Map<String, Map<AttributePriority, Set<Pair<Number, AttributeModifier>>>> attributeModifiers = new HashMap<>();
 	private final Map<String, Object> attributeValues = new HashMap<>();
@@ -834,13 +814,13 @@ public abstract class CoreAbility implements Ability {
 
 	public String getMovePreview(final Player player) {
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		String displayedMessage = getMovePreviewWithoutCooldownTimer(player, false);
+		String message = getMovePreviewWithoutCooldownTimer(player, false);
 		if (bPlayer.isOnCooldown(this)) {
 			final long cooldown = bPlayer.getCooldown(this.getName()) - System.currentTimeMillis();
-			displayedMessage += this.getElement().getColor() + " - " + TimeUtil.formatTime(cooldown);
+			message = this.getElement().getColor() + TimeUtil.formatTime(cooldown) + " " + ChatColor.STRIKETHROUGH + message;
 		}
 
-		return displayedMessage;
+		return message;
 	}
 
 	public String getMovePreviewWithoutCooldownTimer(final Player player, boolean forceCooldown) {

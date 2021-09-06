@@ -1,12 +1,15 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import java.util.List;
-
-import org.bukkit.Color;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.TempArmor;
+import com.projectkorra.projectkorra.util.TempBlock;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -17,15 +20,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.EarthAbility;
-import com.projectkorra.projectkorra.ability.ElementalAbility;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.TempArmor;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.List;
 
 public class EarthArmor extends EarthAbility {
 
@@ -197,7 +192,7 @@ public class EarthArmor extends EarthAbility {
 		if (this.isTransparent(newLegsBlock) && !newLegsBlock.isLiquid()) {
 			GeneralMethods.breakBlock(newLegsBlock);
 		} else if (!this.isEarthbendable(newLegsBlock) && !newLegsBlock.isLiquid() && !ElementalAbility.isAir(newLegsBlock.getType())) {
-			newLegsBlock.getLocation().getWorld().playSound(newLegsBlock.getLocation(), Sound.BLOCK_GRASS_BREAK, 1, 1);
+			newLegsBlock.getLocation().getWorld().playSound(newLegsBlock.getLocation(), Sound.BLOCK_GRASS_BREAK, SoundCategory.BLOCKS, 1, 1);
 			ParticleEffect.BLOCK_CRACK.display(newHeadBlock.getLocation(), 8, 0.5, 0.5, 0.5, newLegsBlock.getBlockData());
 			this.remove();
 			return false;
@@ -234,9 +229,9 @@ public class EarthArmor extends EarthAbility {
 		}
 
 		if (System.currentTimeMillis() - this.getStartTime() > this.maxDuration) {
-			this.player.getLocation().getWorld().playSound(this.player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
-			this.player.getLocation().getWorld().playSound(this.player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
-			this.player.getLocation().getWorld().playSound(this.player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
+			this.player.getLocation().getWorld().playSound(this.player.getLocation(), Sound.BLOCK_STONE_BREAK, SoundCategory.BLOCKS, 2, 1);
+			this.player.getLocation().getWorld().playSound(this.player.getLocation(), Sound.BLOCK_STONE_BREAK, SoundCategory.BLOCKS, 2, 1);
+			this.player.getLocation().getWorld().playSound(this.player.getLocation(), Sound.BLOCK_STONE_BREAK, SoundCategory.BLOCKS, 2, 1);
 
 			ParticleEffect.BLOCK_CRACK.display(this.player.getEyeLocation(), 8, 0.1, 0.1, 0.1, this.headMaterial.createBlockData());
 			ParticleEffect.BLOCK_CRACK.display(this.player.getLocation(), 8, 0.1F, 0.1F, 0.1F, this.legsMaterial.createBlockData());
@@ -305,9 +300,9 @@ public class EarthArmor extends EarthAbility {
 				if (abil.formed && abil.goldHearts < 0.9F) {
 					abil.bPlayer.addCooldown(abil);
 
-					abil.player.getLocation().getWorld().playSound(abil.player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
-					abil.player.getLocation().getWorld().playSound(abil.player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
-					abil.player.getLocation().getWorld().playSound(abil.player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
+					abil.player.getLocation().getWorld().playSound(abil.player.getLocation(), Sound.BLOCK_STONE_BREAK, SoundCategory.BLOCKS, 2, 1);
+					abil.player.getLocation().getWorld().playSound(abil.player.getLocation(), Sound.BLOCK_STONE_BREAK, SoundCategory.BLOCKS, 2, 1);
+					abil.player.getLocation().getWorld().playSound(abil.player.getLocation(), Sound.BLOCK_STONE_BREAK, SoundCategory.BLOCKS, 2, 1);
 
 					ParticleEffect.BLOCK_CRACK.display(abil.player.getEyeLocation(), 8, 0.1, 0.1, 0.1, abil.headMaterial.createBlockData());
 					ParticleEffect.BLOCK_CRACK.display(abil.player.getLocation(), 8, 0.1F, 0.1F, 0.1F, abil.legsMaterial.createBlockData());
@@ -460,9 +455,9 @@ public class EarthArmor extends EarthAbility {
 			return;
 		}
 
-		this.player.getLocation().getWorld().playSound(this.player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
-		this.player.getLocation().getWorld().playSound(this.player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
-		this.player.getLocation().getWorld().playSound(this.player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
+		this.player.getLocation().getWorld().playSound(this.player.getLocation(), Sound.BLOCK_STONE_BREAK, SoundCategory.BLOCKS, 2, 1);
+		this.player.getLocation().getWorld().playSound(this.player.getLocation(), Sound.BLOCK_STONE_BREAK, SoundCategory.BLOCKS, 2, 1);
+		this.player.getLocation().getWorld().playSound(this.player.getLocation(), Sound.BLOCK_STONE_BREAK, SoundCategory.BLOCKS, 2, 1);
 
 		ParticleEffect.BLOCK_CRACK.display(this.player.getEyeLocation(), 8, 0.1, 0.1, 0.1, this.headMaterial.createBlockData());
 		ParticleEffect.BLOCK_CRACK.display(this.player.getLocation(), 8, 0.1F, 0.1F, 0.1F, this.legsMaterial.createBlockData());

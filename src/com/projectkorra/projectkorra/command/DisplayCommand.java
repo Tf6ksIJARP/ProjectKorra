@@ -1,15 +1,5 @@
 package com.projectkorra.projectkorra.command;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
@@ -21,6 +11,11 @@ import com.projectkorra.projectkorra.ability.SubAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import java.util.*;
 
 /**
  * Executor for /bending display. Extends {@link PKCommand}.

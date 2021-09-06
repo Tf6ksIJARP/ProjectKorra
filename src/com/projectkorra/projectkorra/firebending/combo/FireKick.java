@@ -1,15 +1,5 @@
 package com.projectkorra.projectkorra.firebending.combo;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bukkit.Location;
-import org.bukkit.Sound;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ComboAbility;
@@ -18,6 +8,16 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.ClickType;
+import org.bukkit.Location;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FireKick extends FireAbility implements ComboAbility {
 
@@ -95,8 +95,8 @@ public class FireKick extends FireAbility implements ComboAbility {
 			final Vector eyeDir = this.player.getEyeLocation().getDirection().normalize().multiply(this.range);
 			this.destination = this.player.getEyeLocation().add(eyeDir);
 
-			this.player.getWorld().playSound(this.player.getLocation(), Sound.ENTITY_HORSE_JUMP, 0.5f, 0f);
-			this.player.getWorld().playSound(this.player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 0.5f, 1f);
+			this.player.getWorld().playSound(this.player.getLocation(), Sound.ENTITY_HORSE_JUMP, SoundCategory.BLOCKS, 0.5f, 0f);
+			this.player.getWorld().playSound(this.player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, SoundCategory.BLOCKS, 0.5f, 1f);
 			for (int i = -30; i <= 30; i += 5) {
 				Vector vec = GeneralMethods.getDirection(this.player.getLocation(), this.destination.clone());
 				vec = GeneralMethods.rotateXZ(vec, i);
@@ -111,7 +111,7 @@ public class FireKick extends FireAbility implements ComboAbility {
 				}
 				fs.runTaskTimer(ProjectKorra.plugin, 0, 1L);
 				this.tasks.add(fs);
-				this.player.getWorld().playSound(this.player.getLocation(), Sound.ITEM_FLINTANDSTEEL_USE, 0.5f, 1f);
+				this.player.getWorld().playSound(this.player.getLocation(), Sound.ITEM_FLINTANDSTEEL_USE, SoundCategory.BLOCKS, 0.5f, 1f);
 			}
 		} else if (this.tasks.size() == 0) {
 			this.remove();

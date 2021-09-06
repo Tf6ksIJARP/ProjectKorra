@@ -1,21 +1,7 @@
 package com.projectkorra.projectkorra.firebending;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.Location;
-import org.bukkit.Sound;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.TNTPrimed;
-import org.bukkit.util.Vector;
-
-import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.Element.SubElement;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.BlueFireAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
@@ -24,6 +10,20 @@ import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+import org.bukkit.Location;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.TNTPrimed;
+import org.bukkit.util.Vector;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FireBlastCharged extends FireAbility {
 
@@ -214,7 +214,7 @@ public class FireBlastCharged extends FireAbility {
 						DamageHandler.damageEntity(entity, damage, this);
 					}
 				}
-				this.location.getWorld().playSound(this.location, Sound.ENTITY_GENERIC_EXPLODE, 5, 1);
+				this.location.getWorld().playSound(this.location, Sound.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 5, 1);
 				ParticleEffect.EXPLOSION_HUGE.display(this.location, 1, 0, 0, 0);
 			}
 		}

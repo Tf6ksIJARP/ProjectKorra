@@ -1,24 +1,5 @@
 package com.projectkorra.projectkorra.ability;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.block.data.Levelled;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -32,6 +13,21 @@ import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.Information;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
+import org.bukkit.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Levelled;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class EarthAbility extends ElementalAbility {
 
@@ -492,7 +488,7 @@ public abstract class EarthAbility extends ElementalAbility {
 			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Earth.EarthSound.Sound' is not valid.");
 			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
+				loc.getWorld().playSound(loc, sound, SoundCategory.BLOCKS, volume, pitch);
 			}
 		}
 	}
@@ -509,7 +505,7 @@ public abstract class EarthAbility extends ElementalAbility {
 			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Earth.MetalSound.Sound' is not valid.");
 			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
+				loc.getWorld().playSound(loc, sound, SoundCategory.BLOCKS, volume, pitch);
 			}
 		}
 	}
@@ -526,7 +522,7 @@ public abstract class EarthAbility extends ElementalAbility {
 			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Earth.SandSound.Sound' is not valid.");
 			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
+				loc.getWorld().playSound(loc, sound, SoundCategory.BLOCKS, volume, pitch);
 			}
 		}
 	}
@@ -543,7 +539,7 @@ public abstract class EarthAbility extends ElementalAbility {
 			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Properties.Earth.LavaSound.Sound' is not valid.");
 			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
+				loc.getWorld().playSound(loc, sound, SoundCategory.BLOCKS, volume, pitch);
 			}
 		}
 	}

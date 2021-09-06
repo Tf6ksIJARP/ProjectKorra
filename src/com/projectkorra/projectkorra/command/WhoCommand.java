@@ -1,26 +1,5 @@
 package com.projectkorra.projectkorra.command;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.SocketException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.ElementType;
@@ -29,6 +8,22 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.SocketException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.Charset;
+import java.util.*;
 
 /**
  * Executor for /bending who. Extends {@link PKCommand}.
@@ -156,7 +151,7 @@ public class WhoCommand extends PKCommand {
 		}
 		
 		final Player player_ = (Player) (player.isOnline() ? player : null);
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player_);
 		
 		if ((!player.isOnline() && !BendingPlayer.getPlayers().containsKey(player.getUniqueId())) || (sender instanceof Player && player_ != null && !((Player) sender).canSee(player_))) {
 			GeneralMethods.sendBrandingMessage(sender, ChatColor.GRAY + this.playerOffline.replace("{player}", ChatColor.WHITE + player.getName() + ChatColor.GRAY).replace("{target}", ChatColor.WHITE + player.getName() + ChatColor.GRAY));
@@ -190,7 +185,7 @@ public class WhoCommand extends PKCommand {
 			return;
 		}
 
-		bPlayer = BendingPlayer.getBendingPlayer(player);
+		bPlayer = BendingPlayer.getBendingPlayer(player_);
 		if (bPlayer != null) {
 			sender.sendMessage(player.getName() + (!player.isOnline() ? ChatColor.RESET + " (Offline)" : ""));
 			if (bPlayer.hasElement(Element.AIR)) {

@@ -1,26 +1,5 @@
 package com.projectkorra.projectkorra.firebending;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.block.Block;
-import org.bukkit.block.data.Levelled;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -37,6 +16,15 @@ import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
 import com.projectkorra.projectkorra.waterbending.combo.IceWave;
 import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArmsSpear;
+import org.bukkit.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.Levelled;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
+
+import java.util.*;
 
 public class HeatControl extends FireAbility {
 
@@ -330,6 +318,9 @@ public class HeatControl extends FireAbility {
 			if (PhaseChange.getFrozenBlocksMap().containsKey(tb)) {
 				new PhaseChange(player, PhaseChange.PhaseChangeType.MELT).melt(tb.getBlock());
 			}
+            if (isMeltable(tb.getBlock())) {
+              tb.revertBlock();
+            }
 		}
 
 		WaterSpoutWave.thaw(block);
@@ -394,13 +385,13 @@ public class HeatControl extends FireAbility {
 					if (tempBlock != null) {
 						ParticleEffect.SMOKE_NORMAL.display(tempBlock.getBlock().getLocation().clone().add(0.5, 1, 0.5), 3, 0.1, 0.1, 0.1, 0.01);
 						if (HeatControl.this.randy.nextInt(3) == 0) {
-							tempBlock.getBlock().getWorld().playSound(tempBlock.getBlock().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 0.5F, 1);
+							tempBlock.getBlock().getWorld().playSound(tempBlock.getBlock().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 1);
 						}
 
 						LavaFlow.removeBlock(tempBlock.getBlock());
 					}
 				}
-			}.runTaskLater(ProjectKorra.plugin, 20);
+			}.runTaskLater(ProjectKorra.plugin, 10);
 
 			return;
 		}
@@ -428,11 +419,11 @@ public class HeatControl extends FireAbility {
 
 					ParticleEffect.SMOKE_NORMAL.display(tempBlock.getBlock().getLocation().clone().add(0.5, 1, 0.5), 3, 0.1, 0.1, 0.1, 0.01);
 					if (HeatControl.this.randy.nextInt(3) == 0) {
-						tempBlock.getBlock().getWorld().playSound(tempBlock.getBlock().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 0.5F, 1);
+						tempBlock.getBlock().getWorld().playSound(tempBlock.getBlock().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 1);
 					}
 				}
 			}
-		}.runTaskLater(ProjectKorra.plugin, 20);
+		}.runTaskLater(ProjectKorra.plugin, 10);
 	}
 
 	public void resetLocation(final Location loc) {

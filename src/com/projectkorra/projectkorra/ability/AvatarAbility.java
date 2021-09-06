@@ -1,11 +1,11 @@
 package com.projectkorra.projectkorra.ability;
 
-import org.bukkit.Location;
-import org.bukkit.Sound;
-import org.bukkit.entity.Player;
-
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.ProjectKorra;
+import org.bukkit.Location;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.entity.Player;
 
 public abstract class AvatarAbility extends ElementalAbility {
 
@@ -40,7 +40,7 @@ public abstract class AvatarAbility extends ElementalAbility {
 			} catch (final IllegalArgumentException exception) {
 				ProjectKorra.log.warning("Your current value for 'Abilities.Avatar.AvatarState.Sound.Sound' is not valid.");
 			} finally {
-				loc.getWorld().playSound(loc, sound, volume, pitch);
+				loc.getWorld().playSound(loc, sound, SoundCategory.BLOCKS, volume, pitch);
 			}
 		}
 	}

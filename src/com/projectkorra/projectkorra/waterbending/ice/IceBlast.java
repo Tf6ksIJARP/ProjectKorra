@@ -1,11 +1,16 @@
 package com.projectkorra.projectkorra.waterbending.ice;
 
-import java.util.ArrayList;
-import java.util.Random;
-
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.IceAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
+import com.projectkorra.projectkorra.util.*;
+import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -15,18 +20,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.IceAbility;
-import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.ClickType;
-import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.util.TempPotionEffect;
-import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class IceBlast extends IceAbility {
 
@@ -334,7 +329,7 @@ public class IceBlast extends IceAbility {
 			ParticleEffect.ITEM_CRACK.display(this.location, 2, Math.random(), Math.random(), Math.random(), new ItemStack(Material.ICE));
 			ParticleEffect.SNOW_SHOVEL.display(this.location, 2, Math.random(), Math.random(), Math.random(), 0);
 		}
-		this.location.getWorld().playSound(this.location, Sound.BLOCK_GLASS_BREAK, 5, 1.3f);
+		this.location.getWorld().playSound(this.location, Sound.BLOCK_GLASS_BREAK, SoundCategory.BLOCKS, 5, 1.3f);
 	}
 
 	@Override

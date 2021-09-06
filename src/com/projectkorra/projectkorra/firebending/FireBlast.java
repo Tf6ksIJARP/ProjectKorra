@@ -1,26 +1,8 @@
 package com.projectkorra.projectkorra.firebending;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.BlastFurnace;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.type.Campfire;
-import org.bukkit.block.Furnace;
-import org.bukkit.block.Smoker;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.util.BlockIterator;
-import org.bukkit.util.Vector;
-
+import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.BlueFireAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
@@ -30,7 +12,21 @@ import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.*;
+import org.bukkit.block.data.type.Campfire;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.util.BlockIterator;
+import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class FireBlast extends FireAbility {
 
@@ -166,9 +162,9 @@ public class FireBlast extends FireAbility {
 	}
 
 	public boolean checkLocation(Block block) {
-		if (block.isLiquid()) {
-			this.remove();
-			return false;
+		if (block.isLiquid() || isIce(block)) {
+			new TempBlock(block, Material.AIR).setRevertTime(750L);
+			return true;
 		}
 		if (!block.isPassable()) {
 			if (block.getType() == Material.FURNACE && this.powerFurnace) {

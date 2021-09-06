@@ -1,14 +1,14 @@
 package com.projectkorra.projectkorra.chiblocking;
 
-import org.bukkit.Location;
-import org.bukkit.Sound;
-import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.attribute.Attribute;
+import org.bukkit.Location;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 public class WarriorStance extends ChiAbility {
 
@@ -41,7 +41,7 @@ public class WarriorStance extends ChiAbility {
 		}
 		this.start();
 		this.bPlayer.setStance(this);
-		player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_HURT, 0.5F, 2F);
+		player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_HURT, SoundCategory.BLOCKS, 0.5F, 2F);
 	}
 
 	@Override
@@ -68,7 +68,7 @@ public class WarriorStance extends ChiAbility {
 		this.bPlayer.addCooldown(this);
 		this.bPlayer.setStance(null);
 		if (this.player != null) {
-			this.player.playSound(this.player.getLocation(), Sound.ENTITY_ENDER_DRAGON_SHOOT, 0.5F, 2F);
+			this.player.playSound(this.player.getLocation(), Sound.ENTITY_ENDER_DRAGON_SHOOT, SoundCategory.BLOCKS, 0.5F, 2F);
 			this.player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
 			this.player.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
 		}
